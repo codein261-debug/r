@@ -4,3 +4,4 @@
 #
 # Exemplu:
 # 0001 https://search.google.com/local/writereview?placeid=ChIJ...
+9999 https://example.com/
