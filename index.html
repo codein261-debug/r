@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Recenzie</title>
+<style>
+  :root { color-scheme: light dark; }
+  body {
+    margin: 0; min-height: 100vh; display: grid; place-items: center;
+    font: 17px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  main { max-width: 21rem; padding: 2rem 1.5rem; text-align: center; }
+  h1 { margin: 0 0 .5rem; font-size: 1.3rem; line-height: 1.25; text-wrap: balance; }
+  p { margin: 0; opacity: .75; text-wrap: balance; }
+</style>
+</head>
+<body>
+<main>
+  <h1 id="titlu">Se deschide…</h1>
+  <p id="text"></p>
+</main>
+<noscript><p style="text-align:center">Pagina are nevoie de JavaScript ca să deschidă linkul cardului.</p></noscript>
+<script>
+// Fiecare card trimite aici codul lui: .../?0007
+// Fisierul linkuri.txt spune unde duce fiecare cod. Un rand:  cod  link
+(function () {
+  function show(title, text) {
+    document.getElementById('titlu').textContent = title;
+    document.getElementById('text').textContent = text;
+  }
+  var raw = (location.search || location.hash).slice(1);
+  try { raw = decodeURIComponent(raw); } catch (e) {}
+  var code = raw.split(/[&=#\s]/)[0].toUpperCase().replace(/[^A-Z0-9_-]/g, '').slice(0, 16);
+  if (!code) {
+    return show('Card de recenzii', 'Scanează codul de pe card sau apropie telefonul de el.');
+  }
+  fetch('linkuri.txt?t=' + Date.now(), { cache: 'no-store' })
+    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); })
+    .then(function (txt) {
+      var hit = '', fallback = '';
+      txt.split(/\r?\n/).forEach(function (line) {
+        line = line.trim();
+        if (!line || line.charAt(0) === '#') return;
+        var m = line.match(/^(\S+?)[\s,;]+(\S+)/);
+        if (!m) return;
+        var key = m[1].toUpperCase();
+        if (key === code) hit = m[2];
+        else if (key === '*') fallback = m[2];
+      });
+      var url = hit || fallback;
+      if (/^https?:\/\//i.test(url)) location.replace(url);
+      else show('Cardul ' + code + ' nu este activat încă', 'Va fi legat de pagina de recenzii în scurt timp.');
+    })
+    .catch(function () {
+      show('Linkul nu s-a putut deschide', 'Verifică internetul și scanează din nou.');
+    });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+# Unde duce fiecare card. Un card pe rand:   cod   link
+# Randurile care incep cu # sunt ignorate.
+# Un rand cu * in loc de cod stabileste unde ajung cardurile care nu au inca un link.
+#
+# Exemplu:
+# 0001 https://search.google.com/local/writereview?placeid=ChIJ...
